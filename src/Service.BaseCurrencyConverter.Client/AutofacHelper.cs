@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using MyJetWallet.Sdk.NoSql;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using MyNoSqlServer.DataWriter;
@@ -16,12 +17,7 @@ namespace Service.BaseCurrencyConverter.Client
             var factory = new BaseCurrencyConverterClientFactory(grpcServiceUrl);
             var service = factory.GetBaseCurrencyConverterService();
 
-            var reader = new MyNoSqlReadRepository<BaseAssetConvertMapNoSql>(myNoSqlTcpClient, BaseAssetConvertMapNoSql.TableName);
-
-            builder
-                .RegisterInstance(reader)
-                .As<IMyNoSqlServerDataReader<BaseAssetConvertMapNoSql>>()
-                .SingleInstance();
+            var reader = builder.RegisterMyNoSqlReader<BaseAssetConvertMapNoSql>(myNoSqlTcpClient, BaseAssetConvertMapNoSql.TableName);
 
             builder
                 .RegisterInstance(new BaseCurrencyConverterClientWithCache(service, reader))

@@ -5,6 +5,7 @@ using Autofac.Core;
 using Autofac.Core.Registration;
 using Grpc.Core.Logging;
 using Microsoft.Extensions.Logging;
+using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.Service;
 using MyJetWallet.Sdk.Service.Tools;
 using MyNoSqlServer.Abstractions;
@@ -19,22 +20,14 @@ namespace Service.BaseCurrencyConverter.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var myNoSqlClient = new MyNoSqlTcpClient(
-                Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort),
-                ApplicationEnvironment.HostName ??
-                $"{ApplicationEnvironment.AppName}:{ApplicationEnvironment.AppVersion}");
 
-            builder.RegisterInstance(myNoSqlClient).AsSelf().SingleInstance();
+            var myNoSqlClient = builder.CreateNoSqlClient(Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort));
 
             builder.RegisterType<MyNoSqlTcpClientWatcher>().AutoActivate().SingleInstance();
 
             builder.RegisterAssetsDictionaryClients(myNoSqlClient);
 
-            builder
-                .RegisterInstance(new MyNoSqlServerDataWriter<BaseAssetConvertMapNoSql>(
-                    Program.ReloadedSettings(e => e.MyNoSqlWriterUrl), BaseAssetConvertMapNoSql.TableName, true))
-                .As<IMyNoSqlServerDataWriter<BaseAssetConvertMapNoSql>>()
-                .SingleInstance();
+            builder.RegisterMyNoSqlWriter<BaseAssetConvertMapNoSql>(Program.ReloadedSettings(e => e.MyNoSqlWriterUrl), BaseAssetConvertMapNoSql.TableName, true);
         }
     }
 
