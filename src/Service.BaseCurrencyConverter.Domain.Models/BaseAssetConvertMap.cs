@@ -7,8 +7,7 @@ namespace Service.BaseCurrencyConverter.Domain.Models
     public class BaseAssetConvertMap
     {
         [DataMember(Order = 1)] public string BaseAssetSymbol { get; set; }
-        [DataMember(Order = 2)] public string BrokerId { get; set; }
-        [DataMember(Order = 3)] public List<BaseAssetConvertMapItem> Maps { get; set; }
+        [DataMember(Order = 2)] public List<BaseAssetConvertMapItem> Maps { get; set; }
 
     }
 

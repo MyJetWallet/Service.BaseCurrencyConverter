@@ -12,11 +12,11 @@ namespace Service.BaseCurrencyConverter.Domain.Models
 
         public BaseAssetConvertMap Map { get; set; }
 
-        public static BaseAssetConvertMapNoSql Create(BaseAssetConvertMap map)
+        public static BaseAssetConvertMapNoSql Create(BaseAssetConvertMap map, string brokerId)
         {
             return new BaseAssetConvertMapNoSql()
             {
-                PartitionKey = GeneratePartitionKey(map.BrokerId),
+                PartitionKey = GeneratePartitionKey(brokerId),
                 RowKey = GenerateRowKey(map.BaseAssetSymbol),
                 Map = map
             };

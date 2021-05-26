@@ -40,7 +40,6 @@ namespace Service.BaseCurrencyConverter.Services
 
             var response = new BaseAssetConvertMap()
             {
-                BrokerId = request.BrokerId,
                 BaseAssetSymbol = request.BaseAsset,
                 Maps = new List<BaseAssetConvertMapItem>()
             };
@@ -117,7 +116,7 @@ namespace Service.BaseCurrencyConverter.Services
                 _logger.LogWarning("Cannot find way to convert {fromAssetSymbol} to {toAssetSymbol}", asset.Symbol, request.BaseAsset);
             }
 
-            var entity = BaseAssetConvertMapNoSql.Create(response);
+            var entity = BaseAssetConvertMapNoSql.Create(response, request.BrokerId);
 
             await _writer.InsertOrReplaceAsync(entity);
 
