@@ -71,7 +71,8 @@ namespace Service.BaseCurrencyConverter.Services
                             {
                                 Order = 1,
                                 InstrumentPrice = instrument.Symbol,
-                                IsMultiply = false
+                                IsMultiply = false,
+                                UseBid = true
                             }
                         }
                     });
@@ -92,7 +93,8 @@ namespace Service.BaseCurrencyConverter.Services
                             {
                                 Order = 1,
                                 InstrumentPrice = instrument.Symbol,
-                                IsMultiply = true
+                                IsMultiply = true,
+                                UseBid = true
                             }
                         }
                     });
@@ -149,14 +151,16 @@ namespace Service.BaseCurrencyConverter.Services
                             {
                                 Order = 1,
                                 InstrumentPrice = instrument1.Symbol,
-                                IsMultiply = instrument1.BaseAsset == fromAsset
+                                IsMultiply = instrument1.BaseAsset == fromAsset,
+                                UseBid = true
                             },
 
                             new BaseAssetConvertMapOperation()
                             {
                                 Order = 2,
                                 InstrumentPrice = instrument2.Symbol,
-                                IsMultiply = instrument2.BaseAsset == crossAsset.Symbol
+                                IsMultiply = instrument2.BaseAsset == crossAsset.Symbol,
+                                UseBid = true
                             },
                         };
                     }
