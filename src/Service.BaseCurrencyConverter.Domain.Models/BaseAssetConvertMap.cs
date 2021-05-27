@@ -25,6 +25,6 @@ namespace Service.BaseCurrencyConverter.Domain.Models
         [DataMember(Order = 1)] public int Order { get; set; }
         [DataMember(Order = 2)] public bool IsMultiply { get; set; }
         [DataMember(Order = 3)] public string InstrumentPrice { get; set; }
-        [DataMember(Order = 3)] public bool UseBid { get; set; }
+        [DataMember(Order = 4)] public bool UseBid { get; set; }
     }
 }
