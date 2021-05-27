@@ -1,7 +1,11 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.Service;
+using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
+using Service.AssetsDictionary.Client;
+using Service.BaseCurrencyConverter.Domain.Models;
 
 namespace Service.BaseCurrencyConverter
 {
@@ -9,6 +13,7 @@ namespace Service.BaseCurrencyConverter
     {
         private readonly ILogger<ApplicationLifetimeManager> _logger;
         private readonly MyNoSqlTcpClient _myNoSqlTcpClient;
+        
 
         public ApplicationLifetimeManager(IHostApplicationLifetime appLifetime, ILogger<ApplicationLifetimeManager> logger, MyNoSqlTcpClient myNoSqlTcpClient)
             : base(appLifetime)

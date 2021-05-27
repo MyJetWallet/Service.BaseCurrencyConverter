@@ -117,7 +117,7 @@ namespace Service.BaseCurrencyConverter.Services
             }
 
             var entity = BaseAssetConvertMapNoSql.Create(response, request.BrokerId);
-
+            
             await _writer.InsertOrReplaceAsync(entity);
 
             return response;
