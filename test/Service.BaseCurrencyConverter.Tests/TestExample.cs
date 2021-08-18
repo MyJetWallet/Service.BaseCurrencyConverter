@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Elasticsearch.Net.Specification.IndicesApi;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Service.AssetsDictionary.Domain.Models;
+using Service.BaseCurrencyConverter.Grpc.Models;
 using Service.BaseCurrencyConverter.Services;
 using Service.BaseCurrencyConverter.Settings;
 
@@ -10,8 +12,8 @@ namespace Service.BaseCurrencyConverter.Tests
 {
     public class TestExample
     {
-        private AssetsDictionaryClientMock _assets = new AssetsDictionaryClientMock();
-        private SpotInstrumentDictionaryClientMock _instruments = new SpotInstrumentDictionaryClientMock();
+        private AssetsDictionaryClientMock _assets;
+        private SpotInstrumentDictionaryClientMock _instruments;
         private MyNoSqlServerDataWriterBaseAssetConvertMapNoSqlMock _writer = new MyNoSqlServerDataWriterBaseAssetConvertMapNoSqlMock();
         private SettingsModel _settings = new SettingsModel();
 
@@ -33,15 +35,73 @@ namespace Service.BaseCurrencyConverter.Tests
 
             _settings.CrossAssetsList = "USD;BTC;ETH";
 
+            _assets = new AssetsDictionaryClientMock();
+            _instruments = new SpotInstrumentDictionaryClientMock();
+
             _service = new BaseCurrencyConverterService(loggerFactory.CreateLogger<BaseCurrencyConverterService>(), _assets, _instruments, _settings, _writer);
         }
 
         [Test]
         public void Test1()
         {
-            Console.WriteLine("Debug output");
-            Assert.Pass();
+            AddAsset("ALGO");
+            AddAsset("BTC");
+            AddAsset("EUR");
+
+            AddInstrument("ALGOUSD", "ALGO", "USD");
+            AddInstrument("ALGOBTC", "ALGO", "BTC");
+            AddInstrument("BTCEUR", "BTC", "EUR");
+            AddInstrument("BTCUSD", "BTC", "USD");
+
+            var result = _service.GetConvertorMapToBaseCurrencyAsync(new GetConvertorMapToBaseCurrencyRequest()
+            {
+                BaseAsset = "EUR",
+                BrokerId = Broker
+            }).GetAwaiter().GetResult();
+
+            foreach (var map in result.Maps)
+            {
+                Console.Write($"{map.AssetSymbol} to EUR: ");
+                foreach (var item in map.Operations.OrderBy(e => e.Order))
+                {
+                    Console.Write($"{item.InstrumentPrice}({(item.IsMultiply ? "*" : "/")}) ; ");   
+                }
+
+                Console.WriteLine();
+            }
         }
+
+        [Test]
+        public void Test2()
+        {
+            AddAsset("ALGO");
+            AddAsset("BTC");
+            AddAsset("EUR");
+
+            AddInstrument("ALGOUSD", "ALGO", "USD");
+            AddInstrument("ALGOBTC", "ALGO", "BTC");
+            AddInstrument("BTCEUR", "BTC", "EUR");
+            AddInstrument("BTCUSD", "BTC", "USD");
+
+            var result = _service.GetConvertorMapToBaseCurrencyAsync(new GetConvertorMapToBaseCurrencyRequest()
+            {
+                BaseAsset = "ALGO",
+                BrokerId = Broker
+            }).GetAwaiter().GetResult();
+
+            foreach (var map in result.Maps)
+            {
+                Console.Write($"{map.AssetSymbol} to ALGO: ");
+                foreach (var item in map.Operations.OrderBy(e => e.Order))
+                {
+                    Console.Write($"{item.InstrumentPrice}({(item.IsMultiply ? "*" : "/")}) ; ");
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+
 
         private void AddAsset(string symbol)
         {

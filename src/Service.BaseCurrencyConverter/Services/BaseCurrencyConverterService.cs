@@ -48,7 +48,7 @@ namespace Service.BaseCurrencyConverter.Services
                 Maps = new List<BaseAssetConvertMapItem>()
             };
 
-            foreach (var asset in assets)
+            foreach (var asset in assets.Where(e => e.IsEnabled))
             {
                 if (asset.Symbol == request.BaseAsset)
                 {

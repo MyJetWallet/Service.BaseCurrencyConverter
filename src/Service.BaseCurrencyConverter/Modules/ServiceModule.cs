@@ -29,6 +29,10 @@ namespace Service.BaseCurrencyConverter.Modules
             builder.RegisterMyNoSqlWriter<BaseAssetConvertMapNoSql>(Program.ReloadedSettings(e => e.MyNoSqlWriterUrl), BaseAssetConvertMapNoSql.TableName, true);
 
             builder.RegisterType<NoSqlCleanJob>().As<IStartable>().AutoActivate().SingleInstance();
+
+            builder
+                .RegisterType<BaseCurrencyConverterService>()
+                .AsSelf();
         }
     }
 }

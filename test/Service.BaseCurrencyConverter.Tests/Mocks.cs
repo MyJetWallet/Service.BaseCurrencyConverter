@@ -74,7 +74,7 @@ namespace Service.BaseCurrencyConverter.Tests
 
         public ValueTask InsertOrReplaceAsync(BaseAssetConvertMapNoSql entity)
         {
-            throw new NotImplementedException();
+            return ValueTask.CompletedTask;
         }
 
         public ValueTask CleanAndKeepLastRecordsAsync(string partitionKey, int amount)
