@@ -7,10 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MyJetWallet.Service.AssetsDictionary.Client" Version="1.6.3" />
+    <PackageReference Include="MyJetWallet.Service.AssetsDictionary.Client" Version="1.7.1" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Service.BaseCurrencyConverter.Domain.Models\Service.BaseCurrencyConverter.Domain.Models.csproj" />
+    <ProjectReference Include="..\..\src\Service.BaseCurrencyConverter\Service.BaseCurrencyConverter.csproj" />
   </ItemGroup>
 
 </Project>
