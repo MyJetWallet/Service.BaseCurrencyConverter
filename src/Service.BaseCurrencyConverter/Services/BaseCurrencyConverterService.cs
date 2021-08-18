@@ -22,8 +22,12 @@ namespace Service.BaseCurrencyConverter.Services
         private readonly IMyNoSqlServerDataWriter<BaseAssetConvertMapNoSql> _writer;
         private readonly List<string> _crossAssets;
 
-        public BaseCurrencyConverterService(ILogger<IBaseCurrencyConverterService> logger, IAssetsDictionaryClient assetsDictionary, ISpotInstrumentDictionaryClient instrumentDictionary,
-            SettingsModel settings, IMyNoSqlServerDataWriter<BaseAssetConvertMapNoSql> writer)
+        public BaseCurrencyConverterService(
+            ILogger<IBaseCurrencyConverterService> logger, 
+            IAssetsDictionaryClient assetsDictionary, 
+            ISpotInstrumentDictionaryClient instrumentDictionary,
+            SettingsModel settings, 
+            IMyNoSqlServerDataWriter<BaseAssetConvertMapNoSql> writer)
         {
             _logger = logger;
             _assetsDictionary = assetsDictionary;
