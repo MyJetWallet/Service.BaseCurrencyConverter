@@ -6,6 +6,7 @@ using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using Service.AssetsDictionary.Client;
 using Service.BaseCurrencyConverter.Domain.Models;
+using Service.BaseCurrencyConverter.Services;
 
 namespace Service.BaseCurrencyConverter
 {
@@ -13,19 +14,25 @@ namespace Service.BaseCurrencyConverter
     {
         private readonly ILogger<ApplicationLifetimeManager> _logger;
         private readonly MyNoSqlTcpClient _myNoSqlTcpClient;
-        
+        private readonly BaseCurrencyConverterJob _baseCurrencyConverterJob;
 
-        public ApplicationLifetimeManager(IHostApplicationLifetime appLifetime, ILogger<ApplicationLifetimeManager> logger, MyNoSqlTcpClient myNoSqlTcpClient)
+
+        public ApplicationLifetimeManager(IHostApplicationLifetime appLifetime, 
+            ILogger<ApplicationLifetimeManager> logger, 
+            MyNoSqlTcpClient myNoSqlTcpClient, 
+            BaseCurrencyConverterJob baseCurrencyConverterJob)
             : base(appLifetime)
         {
             _logger = logger;
             _myNoSqlTcpClient = myNoSqlTcpClient;
+            _baseCurrencyConverterJob = baseCurrencyConverterJob;
         }
 
         protected override void OnStarted()
         {
             _logger.LogInformation("OnStarted has been called.");
             _myNoSqlTcpClient.Start();
+            _baseCurrencyConverterJob.Start();
         }
 
         protected override void OnStopping()
