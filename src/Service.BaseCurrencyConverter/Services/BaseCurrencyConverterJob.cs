@@ -47,25 +47,13 @@ namespace Service.BaseCurrencyConverter.Services
 
         private async Task DoTime()
         {
-            var iterations = 30;
-            while (!_assetsDictionary.GetAllAssets().Any() && iterations > 0)
-            {
-                await Task.Delay(1000);
-                iterations--;
-            }
-
-            iterations = 30;
-            while (!_instrumentDictionary.GetAllSpotInstruments().Any() && iterations > 0)
-            {
-                await Task.Delay(1000);
-                iterations--;
-            }
+            _logger.LogInformation("Start recalculation of convert maps...");
 
             var assets = _assetsDictionary.GetAllAssets();
 
             foreach (var asset in assets.Where(e => e.IsEnabled))
             {
-                await GetConvertorMapToBaseCurrencyAsync(asset.BrokerId, asset.Symbol);
+                await GetConvertorMapToBaseCurrencyAsync(asset.BrokerId, asset);
                 _logger.LogInformation("Recalculation done for: {symbol}", asset.Symbol);
             }
 
@@ -73,20 +61,23 @@ namespace Service.BaseCurrencyConverter.Services
         }
 
 
-        public async Task GetConvertorMapToBaseCurrencyAsync(string brokerId, string baseAsset)
+        public async Task GetConvertorMapToBaseCurrencyAsync(string brokerId, IAsset baseAsset)
         {
             var assets = _assetsDictionary.GetAssetsByBroker(new JetBrokerIdentity() {BrokerId = brokerId});
             var instruments = _instrumentDictionary.GetSpotInstrumentByBroker(new JetBrokerIdentity() { BrokerId = brokerId });
 
             var response = new BaseAssetConvertMap()
             {
-                BaseAssetSymbol = baseAsset,
+                BaseAssetSymbol = baseAsset.Symbol,
                 Maps = new List<BaseAssetConvertMapItem>()
             };
 
             foreach (var asset in assets.Where(e => e.IsEnabled))
             {
-                if (asset.Symbol == baseAsset)
+                if (baseAsset.IsMainNet != asset.IsMainNet)
+                    continue;
+
+                if (asset.Symbol == baseAsset.Symbol)
                 {
                     response.Maps.Add(new BaseAssetConvertMapItem()
                     {
@@ -97,7 +88,7 @@ namespace Service.BaseCurrencyConverter.Services
                     continue;
                 }
 
-                var instrument = instruments.FirstOrDefault(e => e.BaseAsset == baseAsset && e.QuoteAsset == asset.Symbol && e.IsEnabled);
+                var instrument = instruments.FirstOrDefault(e => e.BaseAsset == baseAsset.Symbol && e.QuoteAsset == asset.Symbol && e.IsEnabled);
                 
                 if (instrument != null)
                 {
@@ -119,7 +110,7 @@ namespace Service.BaseCurrencyConverter.Services
                     continue;
                 }
 
-                instrument = instruments.FirstOrDefault(e => e.BaseAsset == asset.Symbol && e.QuoteAsset == baseAsset && e.IsEnabled);
+                instrument = instruments.FirstOrDefault(e => e.BaseAsset == asset.Symbol && e.QuoteAsset == baseAsset.Symbol && e.IsEnabled);
 
                 if (instrument != null)
                 {
@@ -141,7 +132,7 @@ namespace Service.BaseCurrencyConverter.Services
                     continue;
                 }
 
-                var crossWay = FindCrossAssetWay(assets, instruments, asset.Symbol, baseAsset);
+                var crossWay = FindCrossAssetWay(assets, instruments, asset.Symbol, baseAsset.Symbol);
                 if (crossWay != null)
                 {
                     response.Maps.Add(new BaseAssetConvertMapItem()
@@ -153,7 +144,7 @@ namespace Service.BaseCurrencyConverter.Services
                     continue;
                 }
 
-                _logger.LogError("Cannot find way to convert {fromAssetSymbol} to {toAssetSymbol}", asset.Symbol, baseAsset);
+                _logger.LogError("Cannot find way to convert {fromAssetSymbol} to {toAssetSymbol}", asset.Symbol, baseAsset.Symbol);
             }
 
             var entity = BaseAssetConvertMapNoSql.Create(response, brokerId);
