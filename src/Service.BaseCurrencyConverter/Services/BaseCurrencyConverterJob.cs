@@ -51,6 +51,11 @@ namespace Service.BaseCurrencyConverter.Services
 
             var assets = _assetsDictionary.GetAllAssets();
 
+            if (assets.Count == 0)
+                await Task.Delay(10000);
+            
+            assets = _assetsDictionary.GetAllAssets(); 
+
             foreach (var asset in assets.Where(e => e.IsEnabled))
             {
                 await GetConvertorMapToBaseCurrencyAsync(asset.BrokerId, asset);
