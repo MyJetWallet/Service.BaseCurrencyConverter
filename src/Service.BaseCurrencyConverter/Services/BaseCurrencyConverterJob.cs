@@ -149,7 +149,7 @@ namespace Service.BaseCurrencyConverter.Services
                     continue;
                 }
 
-                _logger.LogError("Cannot find way to convert {fromAssetSymbol} to {toAssetSymbol}", asset.Symbol, baseAsset.Symbol);
+                _logger.LogWarning("Cannot find way to convert {fromAssetSymbol} to {toAssetSymbol}", asset.Symbol, baseAsset.Symbol);
             }
 
             var entity = BaseAssetConvertMapNoSql.Create(response, brokerId);
