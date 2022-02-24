@@ -12,7 +12,7 @@ namespace Service.BaseCurrencyConverter.Client
 {
     public static class AutofacHelper
     {
-        public static void RegisterBaseCurrencyConverterClient(this ContainerBuilder builder, string grpcServiceUrl, MyNoSqlTcpClient myNoSqlTcpClient)
+        public static void RegisterBaseCurrencyConverterClient(this ContainerBuilder builder, string grpcServiceUrl, IMyNoSqlSubscriber myNoSqlTcpClient)
         {
             var factory = new BaseCurrencyConverterClientFactory(grpcServiceUrl);
             var service = factory.GetBaseCurrencyConverterService();
