@@ -11,7 +11,7 @@ namespace Service.BaseCurrencyConverter.Modules
         protected override void Load(ContainerBuilder builder)
         {
 
-            var myNoSqlClient = builder.CreateNoSqlClient(Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort));
+            var myNoSqlClient = builder.CreateNoSqlClient(Program.Settings.MyNoSqlReaderHostPort, Program.LogFactory);
 
             builder.RegisterAssetsDictionaryClients(myNoSqlClient);
 
